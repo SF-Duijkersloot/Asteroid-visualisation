@@ -4,7 +4,8 @@
 
     export let data
     const { asteroids } = data
-
+    console.log(asteroids);
+    
     let width = 750
     let height = 750
 
@@ -17,26 +18,39 @@
     const centerX = width / 2
     const centerY = height / 2
 
-    // Control minimum and maximum radius
-    let minRadius = 150
-    let maxRadius = 300
+    // Control minimum and maximum orbital radius
+    let minOrbitalRadius = 150
+    let maxOrbitalRadius = 300
 
     // Speed control factor
     let speedFactor = 0.01 // Adjust this to control overall speed (0.1 is slower, 1 is faster)
 
     // Scaling radius based on `miss_distance.lunar`
     const maxDistance = d3.max(asteroids, d => +d.close_approach_data[0].miss_distance.lunar)
-    const radiusScale = d3.scaleLinear()
+    const orbitalRadiusScale = d3.scaleLinear()
         .domain([0, maxDistance])
-        .range([minRadius, maxRadius])
+        .range([minOrbitalRadius, maxOrbitalRadius])
 
     // Set initial angle and scaled angular velocity for each asteroid
-    $: asteroidData = sortedAsteroids.map((asteroid) => ({
-        ...asteroid,
-        radius: radiusScale(+asteroid.close_approach_data[0].miss_distance.lunar),
-        angle: Math.random() * 2 * Math.PI, // Random initial angle
-        angularVelocity: +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour / 1e5 * speedFactor // Adjust speed
-    }))
+    $: asteroidData = sortedAsteroids.map((asteroid) => {
+        const estimatedDiameterMin = +asteroid.estimated_diameter.meters.estimated_diameter_min;
+        const estimatedDiameterMax = +asteroid.estimated_diameter.meters.estimated_diameter_max;
+
+        // Calculate the average diameter
+        const averageDiameter = (estimatedDiameterMin + estimatedDiameterMax) / 2;
+        const scaledCircleRadius = averageDiameter / 40; // Scale down for display size
+
+        // Calculate the orbital radius
+        const orbitalRadius = orbitalRadiusScale(+asteroid.close_approach_data[0].miss_distance.lunar);
+
+        return {
+            ...asteroid,
+            orbitalRadius: orbitalRadius, // Use this for positioning
+            scaledCircleRadius: scaledCircleRadius, // Use this for the size of the asteroid
+            angle: Math.random() * 2 * Math.PI, // Random initial angle
+            angularVelocity: +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour / 1e5 * speedFactor // Adjust speed
+        };
+    })
 
     // Animation frame setup
     let requestId
@@ -76,7 +90,6 @@
 <div class="chart-container" bind:clientWidth={width}>
     <svg {width} {height}>
         <g transform="translate({centerX}, {centerY})">
-
             <g class="earth-container">
                 <svg class="earth-svg" width="222" height="222" viewBox="0 0 222 222" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="111" cy="111" r="111" fill="#3E6793"/>
@@ -84,11 +97,11 @@
                 </svg>
             </g>
             <!-- Render animated asteroids -->
-            {#each asteroidData as { radius, angle, is_potentially_hazardous_asteroid }, index}
+            {#each asteroidData as { scaledCircleRadius, angle, orbitalRadius, is_potentially_hazardous_asteroid }, index}
                 <circle 
-                    cx={radius * Math.cos(angle)}
-                    cy={radius * Math.sin(angle)}
-                    r={10}
+                    cx={orbitalRadius * Math.cos(angle)}
+                    cy={orbitalRadius * Math.sin(angle)}
+                    r={scaledCircleRadius}
                     fill={is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD'}
                 />
             {/each}
