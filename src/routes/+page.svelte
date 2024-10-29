@@ -1,4 +1,9 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+    import Visualization from "$lib/components/Visualisation.svelte"
+    
+    export let data
+</script>
 
-<p>go to home <a href="/home">home</a></p>
+<h1>Asteroid Visualization Home Page</h1>
+
+<Visualization {data} />
