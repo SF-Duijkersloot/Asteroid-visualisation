@@ -4,6 +4,14 @@
     export let data
 </script>
 
-<h1>Asteroid Visualization Home Page</h1>
+<h1>Asteroid Visualization</h1>
 
 <Visualization {data} />
+
+
+<style>
+    h1 {
+        color: white;
+        text-align: center;
+    }
+</style>
