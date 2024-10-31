@@ -32,7 +32,6 @@
 
     onMount(() => {
         isDebugMode = window.location.hash === "#debug" // Check if the URL contains #debug
-        console.log(isDebugMode)
         requestId = requestAnimationFrame(animateAsteroids)
         return () => cancelAnimationFrame(requestId)
     })
@@ -42,21 +41,54 @@
 {/if}
 
 <div class="chart-container">
-    <svg {width} {height}>
-        <g transform="translate({centerX}, {centerY})">
-            {#each asteroidData as asteroid}
-                <Asteroid {asteroid} />
-            {/each}
-        </g>
-    </svg>
-    <Earth />
+    <div class="chart-grouping">
+        <svg {width} {height}>
+            <g transform="translate({centerX}, {centerY})">
+                {#each asteroidData as asteroid}
+                    <Asteroid {asteroid} />
+                {/each}
+            </g>
+        </svg>
+        <Earth />
+    </div>
+
+    <div class="asteroid-counter">
+        <span>&larr;</span>
+        <p>
+            {asteroidData.length} asteroids that have passed the earth from 23-10-2024 to 30-10-2024
+        </p>
+    </div>
 </div>
 
 <style>
     .chart-container {
         display: flex;
+        position: sticky;
+        top: 0;
         justify-content: center;
         align-items: center;
-        width: fit-content;
+        /* border: 1px solid red; */
+    }
+
+    .chart-grouping {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .chart-container svg {
+        /* border: 2px solid white; */
+    }
+
+    .asteroid-counter {
+        position: relative;
+        display: flex;
+        gap: 1em;
+        font-size: 1em;
+        width: 10em;
+        color: white;
+    }
+    .asteroid-counter p {
+        margin: 0;
     }
 </style>

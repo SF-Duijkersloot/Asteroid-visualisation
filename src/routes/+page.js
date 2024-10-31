@@ -1,9 +1,11 @@
 const API_KEY = import.meta.env.VITE_NASA_API_KEY
 
-const date = {
-    start: '2024-10-19',
-    end: '2024-10-26'
-}
+// Get the date of the last 7 days (minus today)
+let date = {
+    end: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 ).toISOString().split('T')[0],
+    start: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+} 
+console.log(date)
 
 export const load = async ({ fetch }) => {
 
