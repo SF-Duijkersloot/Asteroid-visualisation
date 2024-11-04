@@ -28,5 +28,6 @@
         flex-direction: column;
         gap: 1em;
         color: white;
+        z-index: 999;
     }
 </style>

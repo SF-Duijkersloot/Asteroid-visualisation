@@ -7,7 +7,7 @@
     import Controls from "./Controls.svelte"
 
     export let data
-    const { asteroids } = data
+    const { asteroids, date } = data
 
     let width = 750
     let height = 750
@@ -36,6 +36,7 @@
         return () => cancelAnimationFrame(requestId)
     })
 </script>
+
 {#if isDebugMode}
     <Controls bind:speedFactor bind:minOrbitalRadius bind:maxOrbitalRadius />
 {/if}
@@ -55,7 +56,7 @@
     <div class="asteroid-counter">
         <span>&larr;</span>
         <p>
-            {asteroidData.length} asteroids that have passed the earth from 23-10-2024 to 30-10-2024
+            {asteroidData.length} asteroids that have passed the earth from {date.start} to {date.end}
         </p>
     </div>
 </div>
@@ -76,10 +77,6 @@
         align-items: center;
     }
 
-    .chart-container svg {
-        /* border: 2px solid white; */
-    }
-
     .asteroid-counter {
         position: relative;
         display: flex;
@@ -88,6 +85,7 @@
         width: 10em;
         color: white;
     }
+    
     .asteroid-counter p {
         margin: 0;
     }

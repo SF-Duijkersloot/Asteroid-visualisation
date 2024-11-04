@@ -5,7 +5,7 @@ let date = {
     end: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 ).toISOString().split('T')[0],
     start: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 } 
-console.log(date)
+
 
 export const load = async ({ fetch }) => {
 
@@ -17,6 +17,7 @@ export const load = async ({ fetch }) => {
     }
 
     return {
-        asteroids:  await fetchNeo(date)
+        asteroids:  await fetchNeo(date),
+        date
     }
 }
