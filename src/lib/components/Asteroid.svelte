@@ -12,4 +12,6 @@
     {cy}
     r={scaledCircleRadius}
     fill={is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD'}
+    class="asteroid"
+    data-hazardous="{is_potentially_hazardous_asteroid}"
 />

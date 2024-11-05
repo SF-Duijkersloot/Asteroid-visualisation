@@ -15,7 +15,7 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         const scaledCircleRadius = avgDiameter / 40
         const orbitalRadius = orbitalRadiusScale(+asteroid.close_approach_data[0].miss_distance.lunar)
         const angularVelocity = +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour / 1e5 * speedFactor
-
+            
         return {
             ...asteroid,
             orbitalRadius,

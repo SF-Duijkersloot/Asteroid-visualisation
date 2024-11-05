@@ -1,6 +1,10 @@
 <script>
+    import * as d3 from "d3"
     import { onMount } from "svelte"
     import { processAsteroidData } from "../utils/processData"
+    
+    // Import animations from the utils folder
+    import { fadeOutNonHazardousAsteroids, fadeInNonHazardousAsteroids } from "../utils/animations.js"
     
     import Asteroid from "./Asteroid.svelte"
     import Earth from "./Earth.svelte"
@@ -18,23 +22,50 @@
     const centerX = width / 2
     const centerY = height / 2
     let isDebugMode
-    // Processed data with helper function
-    $: asteroidData = processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor)
+    let asteroidData = processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor)
 
     let requestId
     const animateAsteroids = () => {
         asteroidData = asteroidData.map(asteroid => ({
             ...asteroid,
-            angle: (asteroid.angle + asteroid.angularVelocity) % (2 * Math.PI)
+            angle: (asteroid.angle + asteroid.angularVelocity) % (2 * Math.PI),
         }))
         requestId = requestAnimationFrame(animateAsteroids)
     }
 
+    let dangerousAsteroidObserver
+    let dangerousAsteroidElement
+
     onMount(() => {
-        isDebugMode = window.location.hash === "#debug" // Check if the URL contains #debug
+        isDebugMode = window.location.hash === '#debug'
         requestId = requestAnimationFrame(animateAsteroids)
-        return () => cancelAnimationFrame(requestId)
+
+        // Set up the intersection observer for the '.dangerous-asteroid' element
+        dangerousAsteroidElement = document.querySelector('.dangerous-asteroid')
+        dangerousAsteroidObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    // Fade out the asteroids that are not potentially hazardous
+                    console.log('Dangerous asteroid is in view')
+                    
+                    fadeOutNonHazardousAsteroids()
+                } else {
+                    // Fade back in the non-hazardous asteroids
+                    fadeInNonHazardousAsteroids()
+                }
+            }, { 
+                rootMargin: '-50% 0px',
+                threshold: 0.5 
+            })
+        })
+        dangerousAsteroidObserver.observe(dangerousAsteroidElement)
+
+        return () => {
+            dangerousAsteroidObserver.unobserve(dangerousAsteroidElement)
+            cancelAnimationFrame(requestId)
+        }
     })
+
 </script>
 
 {#if isDebugMode}
@@ -68,7 +99,7 @@
         top: 0;
         justify-content: center;
         align-items: center;
-        /* border: 1px solid red; */
+        /* border: 1px solid red;*/
     }
 
     .chart-grouping {

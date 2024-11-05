@@ -38,7 +38,7 @@
     }
 
     .dangerous-asteroid {
-        margin-top: 35em;
+        margin-top: 75em;
     }
     article h2 {
         font-size: 6vw;
