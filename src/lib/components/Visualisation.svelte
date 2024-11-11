@@ -116,7 +116,7 @@
         width: 10em;
         color: white;
     }
-    
+
     .asteroid-counter p {
         margin: 0;
     }

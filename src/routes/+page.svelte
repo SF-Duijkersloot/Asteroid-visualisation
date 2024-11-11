@@ -1,6 +1,5 @@
 <script>
     import Visualization from "$lib/components/Visualisation.svelte"
-    
     export let data
 </script>
 
@@ -33,8 +32,8 @@
     }
 
     article {
-        /* width: 50%; */
-        /* border: 1px solid blue; */
+        border: 1px solid white;
+        height: 300vh;
     }
 
     .dangerous-asteroid {
