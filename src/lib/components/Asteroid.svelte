@@ -3,7 +3,7 @@
     import { onMount } from 'svelte';
     export let asteroid
 
-    $: ({ clampedRadius, angle, orbitalRadius, is_potentially_hazardous_asteroid, isClamped } = asteroid)
+    $: ({ clampedRadius, angle, rawOrbitalRadius, orbitalRadius, is_potentially_hazardous_asteroid, isClamped } = asteroid)
 
     $: cx = orbitalRadius * Math.cos(angle)
     $: cy = orbitalRadius * Math.sin(angle)
@@ -22,6 +22,7 @@
     {cy}
     r={clampedRadius}
     fill={is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD'}
+    opacity=0.9
     stroke={isClamped ? 'orange' : 'none'}
     stroke-width={isClamped ? 2 : 0}
     class="asteroid"

@@ -1,11 +1,6 @@
 <script>
-    import * as d3 from "d3"
     import { onMount } from "svelte"
     import { processAsteroidData } from "../utils/processData"
-    
-    // Import animations from the utils folder
-    import { fadeOutNonHazardousAsteroids, fadeInNonHazardousAsteroids } from "../utils/animations.js"
-    
     import Asteroid from "./Asteroid.svelte"
     import Earth from "./Earth.svelte"
     import Controls from "./Controls.svelte"
@@ -17,12 +12,15 @@
     let height = 750
     let minOrbitalRadius = 150
     let maxOrbitalRadius = 300
+    $: moonRadius = (maxOrbitalRadius - minOrbitalRadius) / 4 + minOrbitalRadius
     let speedFactor = 0.01
 
     const centerX = width / 2
     const centerY = height / 2
     let isDebugMode
-    let asteroidData = processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor)
+
+    // Use the processed data structure
+    $: asteroidData = processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor)
 
     let requestId
     const animateAsteroids = () => {
@@ -45,12 +43,9 @@
         dangerousAsteroidObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    // Fade out the asteroids that are not potentially hazardous
                     console.log('Dangerous asteroid is in view')
-                    
                     fadeOutNonHazardousAsteroids()
                 } else {
-                    // Fade back in the non-hazardous asteroids
                     fadeInNonHazardousAsteroids()
                 }
             }, { 
@@ -65,7 +60,6 @@
             cancelAnimationFrame(requestId)
         }
     })
-
 </script>
 
 {#if isDebugMode}
@@ -76,6 +70,19 @@
     <div class="chart-grouping">
         <svg {width} {height}>
             <g transform="translate({centerX}, {centerY})">
+                <!-- Draw the circular line at 10 lunar distance using moonOrbitalRadius -->
+                <circle
+                    class="moon-orbit"
+                    cx="0"
+                    cy="0"
+                    r={moonRadius}
+                    stroke="white"
+                    opacity="0.5"
+                    stroke-width="1"
+                    fill="none"
+                    stroke-dasharray="10 10"
+                />
+
                 {#each asteroidData as asteroid}
                     <Asteroid {asteroid} />
                 {/each}
@@ -99,7 +106,6 @@
         top: 0;
         justify-content: center;
         align-items: center;
-        /* border: 1px solid red;*/
     }
 
     .chart-grouping {

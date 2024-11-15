@@ -8,8 +8,8 @@ const EARTH_SVG_DIAMETER = 100
 
 export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor) {
     // Calculate max distance for scaling
-    const maxDistance = d3.max(asteroids, d => +d.close_approach_data[0].miss_distance.lunar)
-    
+    let maxDistance = d3.max(asteroids, d => +d.close_approach_data[0].miss_distance.lunar)
+
     const orbitalRadiusScale = d3.scaleLinear()
         .domain([0, maxDistance])
         .range([minOrbitalRadius, maxOrbitalRadius])
@@ -21,7 +21,7 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         // Scale the asteroid size relative to Earth's SVG size
         const scaledCircleRadiusScale = d3.scaleLinear()
             .domain([0, EARTH_DIAMETER_METERS])
-            .range([0, (EARTH_SVG_DIAMETER / 2) * 5000])
+            .range([0, (EARTH_SVG_DIAMETER / 2) * 10000])
         
         const scaledCircleRadius = scaledCircleRadiusScale(avgDiameterMeters)
 
@@ -36,11 +36,13 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         let isClamped = clampedRadius === 200
 
         const orbitalRadius = orbitalRadiusScale(+asteroid.close_approach_data[0].miss_distance.lunar)
-        const angularVelocity = +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour / 1e5 * speedFactor
-        
+        const rawOrbitalRadius = asteroid.close_approach_data[0].miss_distance.lunar
+        const angularVelocity = +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour / 100000 * speedFactor
+
         return {
             ...asteroid,
             orbitalRadius,
+            rawOrbitalRadius,
             clampedRadius,
             isClamped,
             angle: Math.random() * 2 * Math.PI,

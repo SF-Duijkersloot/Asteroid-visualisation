@@ -1,34 +1,64 @@
-const API_KEY = import.meta.env.VITE_NASA_API_KEY
+const API_KEY = import.meta.env.VITE_NASA_API_KEY;
 
-// Get the date of the last 7 days (minus today)
-let date = {
-    end: '2024-10-17',
-    start: '2024-10-10'
-} 
+// Get today's date
+const today = new Date(Date.now());
+// Calculate the start date (30 days ago)
+const oneMonthAgo = new Date(today - 30 * 24 * 60 * 60 * 1000);
 
-// let date = {
-//     end: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 ).toISOString().split('T')[0],
-//     start: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-// } 
 export const load = async () => {
+    // Function to fetch data for a given date range
+    const fetchNeo = async (start, end) => {
+        const response = await fetch(
+            `https://api.nasa.gov/neo/rest/v1/feed?start_date=${start}&end_date=${end}&api_key=${API_KEY}`
+        );
+        const data = await response.json();
+        return Object.values(data.near_earth_objects).flat();
+    };
 
-    const fetchNeo = async (date) => {
-        const response = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${date.start}&end_date=${date.end}&api_key=${API_KEY}`)
-        const data = await response.json()
-        const asteroids = Object.values(data.near_earth_objects).flat()
-        // log the 3 largerst asteroids size in km and the velocity in km/s
-        console.log(asteroids.sort((a, b) => b.estimated_diameter.kilometers.estimated_diameter_max - a.estimated_diameter.kilometers.estimated_diameter_max).slice(0, 3).map(asteroid => {
-            return {
-                size: asteroid.estimated_diameter.kilometers.estimated_diameter_max,
-                velocity: asteroid.close_approach_data[0].relative_velocity.kilometers_per_second,
-                nearMiss: asteroid.close_approach_data[0].miss_distance.lunar
-            }
-        }))
-        return asteroids
+    // Helper function to format date as YYYY-MM-DD
+    const formatDate = (date) => date.toISOString().split('T')[0];
+
+    // Generate date ranges for parallel fetching
+    const dateRanges = [];
+    let start = new Date(oneMonthAgo);
+    while (start < today) {
+        const end = new Date(start);
+        end.setDate(end.getDate() + 7); // Increment end by 7 days
+        if (end > today) end.setTime(today.getTime()); // Ensure we don't exceed today's date
+
+        dateRanges.push({
+            start: formatDate(start),
+            end: formatDate(end),
+        });
+
+        start.setDate(start.getDate() + 7); // Move the start date forward by 7 days
     }
+
+    // Fetch all data in parallel
+    const allAsteroidsPromises = dateRanges.map((range) =>
+        fetchNeo(range.start, range.end)
+    );
+
+    const allAsteroidsResults = await Promise.all(allAsteroidsPromises);
+
+    // Flatten the results and filter dangerous asteroids
+    const allAsteroids = allAsteroidsResults
+        .flat()
+        .filter(
+            (asteroid) => +asteroid.close_approach_data[0].miss_distance.astronomical < 0.1
+        );
+
+    console.log(
+        `Total dangerous asteroids: ${allAsteroids.filter(
+            (asteroid) => asteroid.is_potentially_hazardous_asteroid
+        ).length}`
+    );
 
     return {
-        asteroids:  await fetchNeo(date),
-        date
-    }
-}
+        asteroids: allAsteroids,
+        date: {
+            start: formatDate(oneMonthAgo),
+            end: formatDate(today),
+        },
+    };
+};

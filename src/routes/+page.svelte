@@ -3,10 +3,9 @@
     export let data
 </script>
 
-<h1>Asteroid Visualization</h1>
 <div class="visualisation-container">
     <article>
-        <h2>Interesting Title</h2>
+        <h1>Interesting Title</h1>
         <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus voluptatem totam nobis neque alias asperiores, assumenda quia culpa, nam recusandae a iusto? Accusantium recusandae maiores repudiandae sit distinctio quas eveniet.</p>    
         <p class="dangerous-asteroid">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus voluptatem totam nobis neque alias asperiores, assumenda quia culpa, nam recusandae a iusto? Accusantium recusandae maiores repudiandae sit distinctio quas eveniet.</p>    
     </article>
@@ -16,10 +15,6 @@
 
 
 <style>
-    h1 {
-        color: white;
-        text-align: center;
-    }
 
     .visualisation-container {
         display: flex;
@@ -32,14 +27,14 @@
     }
 
     article {
-        border: 1px solid white;
-        height: 300vh;
+        /* border: 1px solid white; */
+        height: 350vh;
     }
 
     .dangerous-asteroid {
-        margin-top: 75em;
+        margin-top: 50em;
     }
-    article h2 {
+    article h1 {
         font-size: 6vw;
     }
 </style>
