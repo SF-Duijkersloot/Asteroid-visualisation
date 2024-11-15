@@ -12,6 +12,7 @@
     let height = 750
     let minOrbitalRadius = 150
     let maxOrbitalRadius = 300
+    // $: moonRadius = maxOrbitalRadius / 4
     $: moonRadius = (maxOrbitalRadius - minOrbitalRadius) / 4 + minOrbitalRadius
     let speedFactor = 0.01
 
@@ -93,13 +94,18 @@
 
     <div class="asteroid-counter">
         <span>&larr;</span>
-        <p>
-            {asteroidData.length} asteroids that have passed the earth from {date.start} to {date.end}
-        </p>
+        <div>    
+            <h3>{asteroidData.length} asteroids</h3>
+            <p>passed within 4 times the distance between the Earth and the Moon over the past 30 days</p>
+        </div>
+        
     </div>
 </div>
 
 <style>
+    svg {
+        overflow: visible;
+    }
     .chart-container {
         display: flex;
         position: sticky;
@@ -118,9 +124,14 @@
         position: relative;
         display: flex;
         gap: 1em;
-        font-size: 1em;
-        width: 10em;
+        font-size: .8em;
+        width: 14em;
         color: white;
+    }
+
+    .asteroid-counter h3 {
+        font-size: 1.1em;
+        margin: 0 0 0.25em 0;
     }
 
     .asteroid-counter p {

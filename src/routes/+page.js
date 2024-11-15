@@ -1,9 +1,9 @@
 const API_KEY = import.meta.env.VITE_NASA_API_KEY;
 
 // Get today's date
-const today = new Date(Date.now());
-// Calculate the start date (30 days ago)
-const oneMonthAgo = new Date(today - 30 * 24 * 60 * 60 * 1000);
+const today = new Date(Date.now())
+// Calculate the start date (4 weeks ago)
+const oneMonthAgo = new Date(today - 28 * 24 * 60 * 60 * 1000);
 
 export const load = async () => {
     // Function to fetch data for a given date range

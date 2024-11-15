@@ -16,6 +16,10 @@
 
 <style>
 
+    * {
+        font-family: inter;
+    }
+
     .visualisation-container {
         display: flex;
         gap: 2em;
@@ -26,6 +30,11 @@
         color: white;
     }
 
+    article h1 {
+        font-family: inter;
+        font-size: 6vw;
+    }
+
     article {
         /* border: 1px solid white; */
         height: 350vh;
@@ -33,8 +42,5 @@
 
     .dangerous-asteroid {
         margin-top: 50em;
-    }
-    article h1 {
-        font-size: 6vw;
     }
 </style>
