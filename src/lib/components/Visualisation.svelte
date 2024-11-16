@@ -13,7 +13,7 @@
     let minOrbitalRadius = 150
     let maxOrbitalRadius = 300
     // $: moonRadius = maxOrbitalRadius / 4
-    $: moonRadius = (maxOrbitalRadius - minOrbitalRadius) / 4 + minOrbitalRadius
+    $: moonRadius = (maxOrbitalRadius - minOrbitalRadius) / 25 + minOrbitalRadius
     let speedFactor = 0.01
 
     const centerX = width / 2

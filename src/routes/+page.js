@@ -45,7 +45,7 @@ export const load = async () => {
     const allAsteroids = allAsteroidsResults
         .flat()
         .filter(
-            (asteroid) => +asteroid.close_approach_data[0].miss_distance.astronomical < 0.1
+            (asteroid) => +asteroid.close_approach_data[0].miss_distance.lunar < 25
         );
 
     console.log(
