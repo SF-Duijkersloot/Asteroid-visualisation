@@ -6,10 +6,14 @@ const earthSVGDiameter = 100
 const scaleFactor = 25000
 
 export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor) {
-    // Calculate max distance for scaling
-    let maxDistance = d3.max(asteroids, d => +d.close_approach_data[0].miss_distance.lunar)
+    // Calculate min & max distance for scaling
     let minDistance = d3.min(asteroids, d => +d.close_approach_data[0].miss_distance.lunar)
+    let maxDistance = d3.max(asteroids, d => +d.close_approach_data[0].miss_distance.lunar)
 
+    // Calculate min & max magnetude for scaling
+    let minMagnetude = d3.min(asteroids, d => +d.absolute_magnitude_h)
+    let maxMagnetude = d3.max(asteroids, d => +d.absolute_magnitude_h)
+    
     /*******************************
               Define scales
     ********************************/
@@ -22,6 +26,11 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
     const scaledCircleRadiusScale = d3.scaleLinear()
         .domain([0, earthDiameterMeters])
         .range([0, (earthSVGDiameter / 2) * scaleFactor])
+
+    // Scale Magnetude (brightness) of the asteroid
+    const magnetudeScale = d3.scaleLinear()
+        .domain([minMagnetude, maxMagnetude])
+        .range([.75, 1])
     
     // Clamp asteroid size to max value
     const clampedRadiusScale = d3.scaleLinear()
@@ -30,7 +39,7 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         .clamp(true)
 
     /*******************************
-               Map asteroid
+              Map asteroids
     ********************************/
     return asteroids.map(asteroid => {
         const avgDiameterMeters = (+asteroid.estimated_diameter.meters.estimated_diameter_min +
@@ -48,17 +57,21 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         
         const rawOrbitalRadius = asteroid.close_approach_data[0].miss_distance.lunar // For debugging
         
+        // Magnitude (brightness) of the asteroid
+        const magnetude = magnetudeScale(+asteroid.absolute_magnitude_h)
+
         // Speed of the asteroid + scaling factor
         const angularVelocity = +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour / 100000 * speedFactor
 
         return {
             ...asteroid,
-            orbitalRadius,
-            rawOrbitalRadius,
             clampedRadius,
             isClamped,
+            orbitalRadius,
+            rawOrbitalRadius,
             angle: Math.random() * 2 * Math.PI,
-            angularVelocity
+            angularVelocity,
+            magnetude
         }
     })
 }

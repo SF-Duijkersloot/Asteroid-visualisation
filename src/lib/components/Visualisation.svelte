@@ -6,7 +6,7 @@
     import Controls from "./Controls.svelte"
 
     export let data
-    const { asteroids, date } = data
+    const { asteroids } = data
 
     let width = 750
     let height = 750
