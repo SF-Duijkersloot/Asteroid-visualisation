@@ -17,14 +17,14 @@
 </script>
 
 <circle 
-    bind:this={circleElement}
-    {cx}
-    {cy}
-    r={clampedRadius}
-    fill={is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD'}
-    opacity={magnetude}
-    stroke={isClamped ? 'orange' : 'none'}
-    stroke-width={isClamped ? 2 : 0}
-    class="asteroid"
-    data-hazardous={is_potentially_hazardous_asteroid}
+    bind:this = { circleElement }
+    cx = { cx }
+    cy = { cy }
+    r = { clampedRadius }
+    fill = { is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD' }
+    opacity = { magnetude }
+    stroke = { isClamped ? 'orange' : 'none' }
+    stroke-width = { isClamped ? 2 : 0 }
+    class = "asteroid"
+    data-hazardous = { is_potentially_hazardous_asteroid }
 />

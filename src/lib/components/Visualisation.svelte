@@ -1,15 +1,18 @@
 <script>
     import { onMount } from "svelte"
     import { processAsteroidData } from "../utils/processData"
+    
+    // Components
     import Asteroid from "./Asteroid.svelte"
     import Earth from "./Earth.svelte"
     import Controls from "./Controls.svelte"
+    import MoonOrbit from './moonOrbit.svelte';
 
     export let data
     const { asteroids } = data
 
-    let width = 750
-    let height = 750
+    let width = 600
+    let height = 600
     let minOrbitalRadius = 150
     let maxOrbitalRadius = 300
     // $: moonRadius = maxOrbitalRadius / 4
@@ -19,6 +22,8 @@
     const centerX = width / 2
     const centerY = height / 2
     let isDebugMode
+
+    let isLoading = true
 
     // Use the processed data structure
     $: asteroidData = processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor)
@@ -32,32 +37,14 @@
         requestId = requestAnimationFrame(animateAsteroids)
     }
 
-    let dangerousAsteroidObserver
-    let dangerousAsteroidElement
-
     onMount(() => {
         isDebugMode = window.location.hash === '#debug'
         requestId = requestAnimationFrame(animateAsteroids)
 
-        // Set up the intersection observer for the '.dangerous-asteroid' element
-        dangerousAsteroidElement = document.querySelector('.dangerous-asteroid')
-        dangerousAsteroidObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    console.log('Dangerous asteroid is in view')
-                    fadeOutNonHazardousAsteroids()
-                } else {
-                    fadeInNonHazardousAsteroids()
-                }
-            }, { 
-                rootMargin: '-50% 0px',
-                threshold: 0.5 
-            })
-        })
-        dangerousAsteroidObserver.observe(dangerousAsteroidElement)
+        // Data has loaded
+        isLoading = false
 
         return () => {
-            dangerousAsteroidObserver.unobserve(dangerousAsteroidElement)
             cancelAnimationFrame(requestId)
         }
     })
@@ -69,27 +56,21 @@
 
 <div class="chart-container">
     <div class="chart-grouping">
-        <svg {width} {height}>
-            <g transform="translate({centerX}, {centerY})">
-                <!-- Draw the circular line at 10 lunar distance using moonOrbitalRadius -->
-                <circle
-                    class="moon-orbit"
-                    cx="0"
-                    cy="0"
-                    r={moonRadius}
-                    stroke="white"
-                    opacity="0.5"
-                    stroke-width="1"
-                    fill="none"
-                    stroke-dasharray="10 10"
-                />
-
-                {#each asteroidData as asteroid}
-                    <Asteroid {asteroid} />
-                {/each}
-            </g>
-        </svg>
-        <Earth />
+        {#if isLoading}
+            <!-- Simple Loading Spinner -->
+            <span class="loader"></span>
+        {:else}
+            <svg {width} {height}>
+                <g transform="translate({centerX}, {centerY})">
+                    <MoonOrbit {moonRadius} />
+                    
+                    {#each asteroidData as asteroid}
+                        <Asteroid {asteroid} />
+                    {/each}
+                </g>
+            </svg>
+            <Earth />
+        {/if}
     </div>
 
     <div class="asteroid-counter">
@@ -112,6 +93,7 @@
         top: 0;
         justify-content: center;
         align-items: center;
+        border: 1px solid pink;
     }
 
     .chart-grouping {
@@ -124,7 +106,8 @@
         position: relative;
         display: flex;
         gap: 1em;
-        font-size: .8em;
+        font-size: .85vw;
+        line-height: 130%;
         width: 14em;
         color: white;
     }
@@ -137,4 +120,36 @@
     .asteroid-counter p {
         margin: 0;
     }
+
+    /* Loading animation by https://cssloaders.github.io/ */
+    .loader {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: inline-block;
+        position: relative;
+        background: linear-gradient(0deg, rgba(235, 218, 213, 0.2) 33%, rgba(235, 218, 213, 1) 100%);
+        /* background: linear-gradient(0deg, #ff3c00 33%, #ff3d00 100%); */
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+    }
+
+    .loader::after {
+        content: '';  
+        box-sizing: border-box;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #181619;
+    }
+
+    @keyframes rotation {
+        0% { transform: rotate(0deg) }
+        100% { transform: rotate(360deg)}
+    } 
+        
 </style>
