@@ -4,7 +4,6 @@
 
     // Props
     export let asteroidData = [] // Array of processed asteroid data
-    let asteroidGroup // Reference to SVG group containing asteroids
 
     // Animation and style constants
     const animationTransition = 1000
@@ -19,13 +18,13 @@
     /*******************************************
         Render and animate asteroids using D3
     ********************************************/
+ 
+            
     const animateAsteroids = () => {
-        const asteroids = d3.select(asteroidGroup)
+        d3.select('.asteroid-group')
             .selectAll('circle')
             .data(asteroidData)
-
-        // Update existing and add new asteroids
-        asteroids.join('circle')
+            .join('circle')
             // Static properties
             .attr('r', d => d.clampedRadius)
             .attr('fill', d => d.is_potentially_hazardous_asteroid 
@@ -61,7 +60,7 @@
     }
 </script>
 
-<g bind:this={asteroidGroup} class="asteroid-group">
+<g class="asteroid-group">
     <circle /> <!-- D3 will dynamically insert asteroids here -->
 </g>
 

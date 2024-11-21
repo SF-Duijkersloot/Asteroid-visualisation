@@ -21,8 +21,6 @@
     let minOrbitalRadius = 125
     let maxOrbitalRadius = 275
     let speedFactor = 0.01
-    const centerX = width / 2
-    const centerY = height / 2
     let isDebugMode = false
     let isLoading = true
 
@@ -39,7 +37,10 @@
             ...asteroid,
             angle: (asteroid.angle + asteroid.angularVelocity) % (2 * Math.PI),
         }))
-        requestId = requestAnimationFrame(animateAsteroids)
+        // Throttle animation to 60fps
+        setTimeout(() => {
+            requestId = requestAnimationFrame(animateAsteroids)
+        }, 1000 / 60)
     }
 
     /*******************************
@@ -68,11 +69,9 @@
             <span class="loader"></span>
         {:else}
             <!-- Main Chart -->
-            <svg {width} {height}>
-                <g transform="translate({centerX}, {centerY})">
+            <svg {width} {height} transform="translate({height / 2}, {width / 2})">
                     <MoonOrbit {moonRadius} />
                     <Asteroids {asteroidData} />
-                </g>
             </svg>
             <Earth />
             <Legend />
