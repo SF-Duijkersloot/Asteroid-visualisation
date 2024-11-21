@@ -1,33 +1,38 @@
 <script>
     import { onMount } from "svelte"
     import { processAsteroidData } from "../utils/processData"
-    
+
     // Components
-    import Asteroid from "./Asteroid.svelte"
+    import Asteroids from "./Asteroids.svelte"
     import Earth from "./Earth.svelte"
     import Controls from "./Controls.svelte"
-    import MoonOrbit from './moonOrbit.svelte';
+    import MoonOrbit from './MoonOrbit.svelte'
+    import Legend from './Legend.svelte'
 
+    // Props
     export let data
     const { asteroids } = data
 
+    /*******************************
+        Settings and Variables
+    ********************************/
     let width = 600
-    let height = 600
-    let minOrbitalRadius = 150
-    let maxOrbitalRadius = 300
-    // $: moonRadius = maxOrbitalRadius / 4
-    $: moonRadius = (maxOrbitalRadius - minOrbitalRadius) / 25 + minOrbitalRadius
+    let height = width
+    let minOrbitalRadius = 125
+    let maxOrbitalRadius = 275
     let speedFactor = 0.01
-
     const centerX = width / 2
     const centerY = height / 2
-    let isDebugMode
-
+    let isDebugMode = false
     let isLoading = true
 
-    // Use the processed data structure
+    // Reactive variables
+    $: moonRadius = (maxOrbitalRadius - minOrbitalRadius) / 25 + minOrbitalRadius
     $: asteroidData = processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor)
 
+    /*******************************
+             Animation Logic
+    ********************************/
     let requestId
     const animateAsteroids = () => {
         asteroidData = asteroidData.map(asteroid => ({
@@ -37,63 +42,71 @@
         requestId = requestAnimationFrame(animateAsteroids)
     }
 
+    /*******************************
+         Mounting and Unmounting
+    ********************************/
     onMount(() => {
         isDebugMode = window.location.hash === '#debug'
         requestId = requestAnimationFrame(animateAsteroids)
-
-        // Data has loaded
-        isLoading = false
+        isLoading = false // Data has loaded
 
         return () => {
-            cancelAnimationFrame(requestId)
+            cancelAnimationFrame(requestId) // Cleanup animation frame on unmount
         }
     })
 </script>
 
 {#if isDebugMode}
+    <!-- Debug Controls -->
     <Controls bind:speedFactor bind:minOrbitalRadius bind:maxOrbitalRadius />
 {/if}
 
 <div class="chart-container">
     <div class="chart-grouping">
         {#if isLoading}
-            <!-- Simple Loading Spinner -->
+            <!-- Loading Spinner -->
             <span class="loader"></span>
         {:else}
+            <!-- Main Chart -->
             <svg {width} {height}>
                 <g transform="translate({centerX}, {centerY})">
                     <MoonOrbit {moonRadius} />
-                    
-                    {#each asteroidData as asteroid}
-                        <Asteroid {asteroid} />
-                    {/each}
+                    <Asteroids {asteroidData} />
                 </g>
             </svg>
             <Earth />
+            <Legend />
         {/if}
     </div>
 
+    <!-- Asteroid Counter -->
     <div class="asteroid-counter">
         <span>&larr;</span>
         <div>    
             <h3>{asteroidData.length} asteroids</h3>
-            <p>passed within 4 times the distance between the Earth and the Moon over the past 30 days</p>
+            <p>
+                passed within 25 times the distance between the Earth and the Moon 
+                over the past 30 days
+            </p>
         </div>
-        
     </div>
 </div>
 
 <style>
+    /* Chart Styles */
     svg {
         overflow: visible;
     }
+
     .chart-container {
         display: flex;
         position: sticky;
-        top: 0;
+        min-width: 42.5vw;
+        top: 45%;
+        margin-right: 7.5vw;
+        transform: translateY(-50%);
         justify-content: center;
         align-items: center;
-        border: 1px solid pink;
     }
 
     .chart-grouping {
@@ -103,10 +116,11 @@
     }
 
     .asteroid-counter {
-        position: relative;
+        position: absolute;
+        right: -12.5vw;
         display: flex;
         gap: 1em;
-        font-size: .85vw;
+        font-size: 0.9vw;
         line-height: 130%;
         width: 14em;
         color: white;
@@ -121,15 +135,15 @@
         margin: 0;
     }
 
-    /* Loading animation by https://cssloaders.github.io/ */
+    /* Loading Animation */
     .loader {
         width: 48px;
         height: 48px;
         border-radius: 50%;
         display: inline-block;
-        position: relative;
+        position: absolute;
+        z-index: 100;
         background: linear-gradient(0deg, rgba(235, 218, 213, 0.2) 33%, rgba(235, 218, 213, 1) 100%);
-        /* background: linear-gradient(0deg, #ff3c00 33%, #ff3d00 100%); */
         box-sizing: border-box;
         animation: rotation 1s linear infinite;
     }
@@ -149,7 +163,6 @@
 
     @keyframes rotation {
         0% { transform: rotate(0deg) }
-        100% { transform: rotate(360deg)}
-    } 
-        
+        100% { transform: rotate(360deg) }
+    }
 </style>
