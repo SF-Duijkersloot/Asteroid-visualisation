@@ -40,14 +40,23 @@
             .attr('stroke-width', d => d.isClamped ? 2 : 0)
             .attr('class', 'asteroid')
             .attr('data-hazardous', d => d.is_potentially_hazardous_asteroid)
-            // Animate position
-            .transition()
-            .duration(animationTransition)
-            .ease(d3.easeLinear)
             .attr('cx', d => calculateCoordinates(d.orbitalRadius, d.angle).x)
             .attr('cy', d => calculateCoordinates(d.orbitalRadius, d.angle).y)
     }
 
+    // const animateAsteroids = () => {
+    //     d3.select(asteroidGroup)
+    //         .selectAll('circle')
+    //         .transition()
+    //         .duration(animationTransition)
+    //         .attrTween()
+    // }
+    // function transition() {
+    //     circle.transition()
+    //         .duration(10000)
+    //         .attrTween("transform", translateAlong(path.node()))
+    //         .each("end", transition);
+    // }
     // Initialize animation on component mount
     onMount(() => {
         if (asteroidData.length > 0) {

@@ -55,6 +55,9 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         const orbitalRadius = orbitalRadiusScale(+asteroid.close_approach_data[0].miss_distance.lunar)
         const rawOrbitalRadius = asteroid.close_approach_data[0].miss_distance.lunar // For debugging
         
+        // use d3 to make a circle with the scaled radius as the radius
+        // const circle = d3.circle(0, 0, scaledCircleRadius
+        
         // Magnitude (brightness) of the asteroid
         const magnitude = magnetudeScale(+asteroid.absolute_magnitude_h)
 
