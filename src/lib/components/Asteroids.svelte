@@ -2,80 +2,67 @@
     import * as d3 from 'd3'
     import { onMount } from 'svelte'
 
-    // Props
-    export let asteroidData = [] // Array of processed asteroid data
-    let asteroidGroup // Reference to SVG group containing asteroids
+    export let asteroidData = []
+    let asteroidGroup
 
-    // Animation and style constants
-    const animationTransition = 1000
-
-    // Calculate x,y coordinates from orbital parameters
-    const calculateCoordinates = (orbitalRadius, angle) => ({
-        x: orbitalRadius * Math.cos(angle),
-        y: orbitalRadius * Math.sin(angle)
-    })
-
-
-    /*******************************************
-        Render and animate asteroids using D3
-    ********************************************/
     const animateAsteroids = () => {
-        const asteroids = d3.select(asteroidGroup)
+        const asteroids = d3.select('.asteroid-group')
             .selectAll('circle')
             .data(asteroidData)
-
-        // Update existing and add new asteroids
-        asteroids.join('circle')
-            // Static properties
-            .attr('r', d => d.clampedRadius)
-            .attr('fill', d => d.is_potentially_hazardous_asteroid 
-                ? '#CC4243' 
-                : '#DDDCDD'
-            )
-            .attr('opacity', d => d.magnitude)
-            .attr('stroke', d => d.isClamped 
-                ? 'orange' 
-                : 'none'
-            )
-            .attr('stroke-width', d => d.isClamped ? 2 : 0)
+            .join('circle')
+            // Set attributes
             .attr('class', 'asteroid')
+            .attr('r', d => d.clampedRadius)
+            .attr('fill', d => d.is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD')
+            .attr('opacity', d => d.magnitude)
+            .attr('stroke', d => d.isClamped ? 'orange' : 'none')
+            .attr('stroke-width', d => d.isClamped ? 2 : 0)
             .attr('data-hazardous', d => d.is_potentially_hazardous_asteroid)
-            .attr('cx', d => calculateCoordinates(d.orbitalRadius, d.angle).x)
-            .attr('cy', d => calculateCoordinates(d.orbitalRadius, d.angle).y)
+            // Start at beginning of path
+            .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
+            // Start the orbital animation
+            .each(function(d) {
+                const node = d3.select(this)
+                function rotate() {
+                    node.transition()
+                        .duration(d.duration)
+                        .ease(d3.easeLinear)
+                        .attrTween('transform', function() {
+                            return function(t) {
+                                const angle = t * 2 * Math.PI
+                                const x = d.orbitalRadius * Math.cos(angle)
+                                const y = d.orbitalRadius * Math.sin(angle)
+                                return `translate(${x},${y})`
+                            }
+                        })
+                        .on('end', rotate) // Make it continuous
+                }
+                rotate()
+            })
+
+        // Remove old elements
+        asteroids.exit().remove()
     }
 
-    // const animateAsteroids = () => {
-    //     d3.select(asteroidGroup)
-    //         .selectAll('circle')
-    //         .transition()
-    //         .duration(animationTransition)
-    //         .attrTween()
-    // }
-    // function transition() {
-    //     circle.transition()
-    //         .duration(10000)
-    //         .attrTween("transform", translateAlong(path.node()))
-    //         .each("end", transition);
-    // }
-    // Initialize animation on component mount
     onMount(() => {
         if (asteroidData.length > 0) {
             animateAsteroids()
         }
     })
 
-    // Trigger animation when asteroid data changes
+    // Only trigger animation when data initially loads or changes
     $: if (asteroidData.length > 0) {
         animateAsteroids()
     }
 </script>
 
-<g bind:this={asteroidGroup} class="asteroid-group">
-    <circle /> <!-- D3 will dynamically insert asteroids here -->
+<g class="asteroid-group">
+    <circle />
+    <!-- D3 will insert asteroid groups here -->
 </g>
 
 <style>
-    .asteroid-group {
+    g {
         overflow: visible;
     }
 </style>

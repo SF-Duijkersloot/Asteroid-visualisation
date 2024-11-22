@@ -33,26 +33,26 @@
     /*******************************
              Animation Logic
     ********************************/
-    let requestId
-    const animateAsteroids = () => {
-        asteroidData = asteroidData.map(asteroid => ({
-            ...asteroid,
-            angle: (asteroid.angle + asteroid.angularVelocity) % (2 * Math.PI),
-        }))
-        requestId = requestAnimationFrame(animateAsteroids)
-    }
+    // let requestId
+    // const animateAsteroids = () => {
+    //     asteroidData = asteroidData.map(asteroid => ({
+    //         ...asteroid,
+    //         angle: (asteroid.angle + asteroid.angularVelocity) % (2 * Math.PI),
+    //     }))
+    //     requestId = requestAnimationFrame(animateAsteroids)
+    // }
 
     /*******************************
          Mounting and Unmounting
     ********************************/
     onMount(() => {
         isDebugMode = window.location.hash === '#debug'
-        requestId = requestAnimationFrame(animateAsteroids)
         isLoading = false // Data has loaded
-
-        return () => {
-            cancelAnimationFrame(requestId) // Cleanup animation frame on unmount
-        }
+        
+        // requestId = requestAnimationFrame(animateAsteroids)
+        // return () => {
+        //     cancelAnimationFrame(requestId) // Cleanup animation frame on unmount
+        // }
     })
 </script>
 
