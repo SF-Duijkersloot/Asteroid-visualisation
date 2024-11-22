@@ -1,4 +1,5 @@
 <script>
+    import * as d3 from 'd3'
     import { onMount } from "svelte"
     import { processAsteroidData } from "../utils/processData"
 
@@ -33,26 +34,34 @@
     /*******************************
              Animation Logic
     ********************************/
-    // let requestId
-    // const animateAsteroids = () => {
-    //     asteroidData = asteroidData.map(asteroid => ({
-    //         ...asteroid,
-    //         angle: (asteroid.angle + asteroid.angularVelocity) % (2 * Math.PI),
-    //     }))
-    //     requestId = requestAnimationFrame(animateAsteroids)
-    // }
+    const showCloseOrbit = () => {
+        d3.select('.asteroid-group')
+            .selectAll('.asteroid')
+            .filter(d => !d.is_potentially_hazardous_asteroid)
+            .transition() // Name this transition
+            .duration(1000)
+            .attr('opacity', 0.1)
+    }
+
 
     /*******************************
          Mounting and Unmounting
     ********************************/
     onMount(() => {
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Start the animation
+                    console.log('Start animation')
+                    showCloseOrbit()
+                }
+            })
+        }, { rootMargin: '0px 0px -50% 0px', threshold: 0.5 })
+
+        sectionObserver.observe(document.querySelector('.close-encounters'))
+
         isDebugMode = window.location.hash === '#debug'
         isLoading = false // Data has loaded
-        
-        // requestId = requestAnimationFrame(animateAsteroids)
-        // return () => {
-        //     cancelAnimationFrame(requestId) // Cleanup animation frame on unmount
-        // }
     })
 </script>
 

@@ -3,7 +3,6 @@
     import { onMount } from 'svelte'
 
     export let asteroidData = []
-    let asteroidGroup
 
     const animateAsteroids = () => {
         const asteroids = d3.select('.asteroid-group')
@@ -24,7 +23,7 @@
             .each(function(d) {
                 const node = d3.select(this)
                 function rotate() {
-                    node.transition()
+                    node.transition('rotate')
                         .duration(d.duration)
                         .ease(d3.easeLinear)
                         .attrTween('transform', function() {
