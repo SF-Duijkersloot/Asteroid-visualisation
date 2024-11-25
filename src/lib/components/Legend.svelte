@@ -1,3 +1,35 @@
+<script>
+    import { onMount } from 'svelte'
+    
+    /*******************************
+           Scroll to Section
+    ********************************/
+    onMount (() => {
+        const hazardousAsteroid = document.querySelector('.legend-item.hazardous-asteroid')
+        const moonOrbit = document.querySelector('.legend-item.moon-orbit')
+
+        // Global function to scroll to a section
+        const scrollIntoView = (selector, offset) => {
+            const rect = document.querySelector(selector).getBoundingClientRect()
+
+            window.scrollTo({
+                behavior: 'smooth',
+                top: window.scrollY + rect.top - (window.innerHeight / 2) + offset,
+            })
+        }
+
+        // Add eventlisteners for the legend items
+        hazardousAsteroid.addEventListener('click', () => {
+            scrollIntoView('.hazardous-asteroids.observer-section', 200)
+        })
+
+        moonOrbit.addEventListener('click', () => {
+            scrollIntoView('.close-encounters.observer-section', 200)
+        })
+    })
+</script>
+
+
 <div class="legend-container">
     <div class="legend">
         <!-- Asteroid Sizes -->
@@ -91,5 +123,10 @@
  
     .moon-orbit span {
         border: .15em dashed #8B8A8C;
+    }
+
+    .hazardous-asteroid, 
+    .moon-orbit {
+        cursor: pointer;
     }
  </style>

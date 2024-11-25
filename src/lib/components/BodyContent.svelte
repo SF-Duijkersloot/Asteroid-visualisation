@@ -14,7 +14,7 @@
     <h2>Visualizing the Past Month's Closest Encounters With Asteroids</h2>
 
     <!-- Introduction -->
-    <p>
+    <p class="observer-section">
         In the past month, Earth has had several close encounters with asteroids. 
         These space rocks may not pose an immediate threat, but they give us a 
         fascinating look at how our solar system works. This visualization shows 
@@ -24,8 +24,8 @@
     </p>
 
     <!-- Content Sections -->
-    <section>
-        <h3 class="close-encounters">Close Encounters</h3>
+    <section class="close-encounters observer-section">
+        <h3>Close Encounters</h3>
         <p>
             Every year, many asteroids pass by Earth—some coming surprisingly close. 
             Most of the time, they aren't dangerous, but they remind us how unpredictable 
@@ -35,7 +35,7 @@
         </p>
     </section>
 
-    <section>
+    <section class="hazardous-asteroids observer-section">
         <h3>Potentially Hazardous Asteroids</h3>
         <p>
             Some asteroids are considered more dangerous than others. These are called 
@@ -46,7 +46,7 @@
         </p>
     </section>
 
-    <section>
+    <section class="observer-section">
         <h3>What Patterns Can We See?</h3>
         <p>
             By looking at the size, speed, and distance of these asteroids, we can start 
@@ -56,7 +56,7 @@
         </p>
     </section>
 
-    <section>
+    <section class="observer-section">
         <h3>Conclusion</h3>
         <p>
             This visualization gives us a small window into the activity of our solar system. 

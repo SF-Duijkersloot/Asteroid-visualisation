@@ -1,3 +1,6 @@
+// Source for +page.js load technique:
+// https://www.youtube.com/watch?v=EQy-AYhZIlE&t=550s
+
 const apiKey = import.meta.env.VITE_NASA_API_KEY
 
 /*******************************
@@ -19,7 +22,7 @@ const generateDateRanges = (startDate, endDate) => {
 
     while (current < endDate) {
         const next = new Date(current)
-        next.setDate(next.getDate() + 6) // Increment by 6 days
+        next.setDate(next.getDate() + 7) // Increment by 7 days
 
         ranges.push({
             start: formatDate(current),
@@ -31,6 +34,8 @@ const generateDateRanges = (startDate, endDate) => {
 
     return ranges
 }
+
+console.log(generateDateRanges(oneMonthAgo, today))
 /*******************************
          Fetch Function
 ********************************/
@@ -67,7 +72,6 @@ export const load = async () => {
         const allAsteroids = allAsteroidsData
             .flat()
             .filter(asteroid => +asteroid.close_approach_data[0].miss_distance.lunar < 25)
-
         // Log total number of potentially hazardous asteroids
         const hazardousCount = allAsteroids.filter(
             asteroid => asteroid.is_potentially_hazardous_asteroid
