@@ -6,6 +6,11 @@ const earthSVGDiameter = 100
 const scaleFactor = 25000
 const maxRadiusClamp = 150
 
+function createOrbitalPath(radius) {
+    // Use SVG path commands directly instead of d3.path()
+    return `M ${radius} 0 A ${radius} ${radius} 0 1 1 ${radius} -0.01 A ${radius} ${radius} 0 1 1 ${radius} 0`;
+}
+
 export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadius, speedFactor) {
     // Calculate min & max distance for scaling
     let minDistance = d3.min(asteroids, d => +d.close_approach_data[0].miss_distance.lunar)
@@ -54,12 +59,22 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         // Scale distance
         const orbitalRadius = orbitalRadiusScale(+asteroid.close_approach_data[0].miss_distance.lunar)
         const rawOrbitalRadius = asteroid.close_approach_data[0].miss_distance.lunar // For debugging
+
+        const closeEncounter = asteroid.close_approach_data[0].miss_distance.lunar <= 1 
+            ? true 
+            : false
         
         // Magnitude (brightness) of the asteroid
         const magnitude = magnetudeScale(+asteroid.absolute_magnitude_h)
 
-        // Speed of the asteroid (+ scaling factor)
-        const angularVelocity = +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour / 100000 * speedFactor
+        const velocity = +asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour
+        
+        // Create orbital path
+        const pathData = createOrbitalPath(orbitalRadius)
+    
+        // Calculate duration based on velocity (faster asteroids complete orbit more quickly)
+        const baseDuration = 100000 // Base duration in milliseconds
+        const duration = baseDuration / (velocity / 10000) // Adjust divisor to tune animation speed
 
         return {
             ...asteroid,
@@ -67,10 +82,11 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
             isClamped,
             orbitalRadius,
             rawOrbitalRadius,
-            // angle: Math.random() * 2 * Math.PI,
-            angle: 0, // Start angle at 0
-            angularVelocity,
-            magnitude
+            closeEncounter,
+            magnitude,
+            velocity,
+            pathData,
+            duration
         }
     })
 }

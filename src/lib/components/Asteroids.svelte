@@ -2,59 +2,54 @@
     import * as d3 from 'd3'
     import { onMount } from 'svelte'
 
-    // Props
-    export let asteroidData = [] // Array of processed asteroid data
+    export let asteroidData = []
 
-    // Animation and style constants
-    const animationTransition = 1000
-
-    // Calculate x,y coordinates from orbital parameters
-    const calculateCoordinates = (orbitalRadius, angle) => ({
-        x: orbitalRadius * Math.cos(angle),
-        y: orbitalRadius * Math.sin(angle)
-    })
-
-
-    /*******************************************
-        Render and animate asteroids using D3
-    ********************************************/
- 
-            
     const animateAsteroids = () => {
-        d3.select('.asteroid-group')
+        const asteroids = d3.select('.asteroid-group')
             .selectAll('circle')
             .data(asteroidData)
             .join('circle')
-            // Static properties
-            .attr('r', d => d.clampedRadius)
-            .attr('fill', d => d.is_potentially_hazardous_asteroid 
-                ? '#CC4243' 
-                : '#DDDCDD'
-            )
-            .attr('opacity', d => d.magnitude)
-            .attr('stroke', d => d.isClamped 
-                ? 'orange' 
-                : 'none'
-            )
-            .attr('stroke-width', d => d.isClamped ? 2 : 0)
+            // Set attributes
             .attr('class', 'asteroid')
+            .attr('r', d => d.clampedRadius)
+            .attr('fill', d => d.is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD')
+            .attr('opacity', d => d.magnitude)
+            .attr('stroke', d => d.isClamped ? 'orange' : 'none')
+            .attr('stroke-width', d => d.isClamped ? 2 : 0)
             .attr('data-hazardous', d => d.is_potentially_hazardous_asteroid)
-            // Animate position
-            .transition()
-            .duration(animationTransition)
-            .ease(d3.easeLinear)
-            .attr('cx', d => calculateCoordinates(d.orbitalRadius, d.angle).x)
-            .attr('cy', d => calculateCoordinates(d.orbitalRadius, d.angle).y)
+            // Start at beginning of path
+            .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
+            // Start the orbital animation
+            .each(function(d) {
+                const node = d3.select(this)
+                function rotate() {
+                    node.transition('rotate')
+                        .duration(d.duration)
+                        .ease(d3.easeLinear)
+                        .attrTween('transform', function() {
+                            return function(t) {
+                                const angle = t * 2 * Math.PI
+                                const x = d.orbitalRadius * Math.cos(angle)
+                                const y = d.orbitalRadius * Math.sin(angle)
+                                return `translate(${x},${y})`
+                            }
+                        })
+                        .on('end', rotate) // Make it continuous
+                }
+                rotate()
+            })
+
+        // Remove old elements
+        asteroids.exit().remove()
     }
 
-    // Initialize animation on component mount
     onMount(() => {
         if (asteroidData.length > 0) {
             animateAsteroids()
         }
     })
 
-    // Trigger animation when asteroid data changes
+    // Only trigger animation when data initially loads or changes
     $: if (asteroidData.length > 0) {
         animateAsteroids()
     }
@@ -65,7 +60,7 @@
 </g>
 
 <style>
-    .asteroid-group {
+    g {
         overflow: visible;
     }
 </style>

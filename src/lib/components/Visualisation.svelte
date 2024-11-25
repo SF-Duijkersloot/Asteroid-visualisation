@@ -1,4 +1,5 @@
 <script>
+    import * as d3 from 'd3'
     import { onMount } from "svelte"
     import { processAsteroidData } from "../utils/processData"
 
@@ -31,29 +32,43 @@
     /*******************************
              Animation Logic
     ********************************/
-    let requestId
-    const animateAsteroids = () => {
-        asteroidData = asteroidData.map(asteroid => ({
-            ...asteroid,
-            angle: (asteroid.angle + asteroid.angularVelocity) % (2 * Math.PI),
-        }))
-        // Throttle animation to 60fps
-        setTimeout(() => {
-            requestId = requestAnimationFrame(animateAsteroids)
-        }, 1000 / 60)
+    const showCloseOrbit = () => {
+        d3.select('.asteroid-group')
+            .selectAll('.asteroid')
+            .filter(d => !d.closeEncounter)
+            .transition('show-close-orbit')
+            .duration(1000)
+            .attr('opacity', 0.1)
     }
+    const scaleCloseOrbit = () => {
+        d3.select('.asteroid-group')
+            .selectAll('.asteroid')
+            .filter(d => d.closeEncounter)
+            .transition('scale-close-orbit')
+            .duration(1000)
+            .attr('r', d => d.clampedRadius * 3)
+    }
+
 
     /*******************************
          Mounting and Unmounting
     ********************************/
     onMount(() => {
-        isDebugMode = window.location.hash === '#debug'
-        requestId = requestAnimationFrame(animateAsteroids)
-        isLoading = false // Data has loaded
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Start the animation
+                    console.log('Start animation')
+                    showCloseOrbit()
+                    scaleCloseOrbit()
+                }
+            })
+        }, { rootMargin: '0px 0px -50% 0px', threshold: 0.5 })
 
-        return () => {
-            cancelAnimationFrame(requestId) // Cleanup animation frame on unmount
-        }
+        sectionObserver.observe(document.querySelector('.close-encounters'))
+
+        isDebugMode = window.location.hash === '#debug'
+        isLoading = false // Data has loaded
     })
 </script>
 

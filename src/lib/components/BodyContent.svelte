@@ -25,7 +25,7 @@
 
     <!-- Content Sections -->
     <section>
-        <h3>Close Encounters</h3>
+        <h3 class="close-encounters">Close Encounters</h3>
         <p>
             Every year, many asteroids pass by Earth—some coming surprisingly close. 
             Most of the time, they aren't dangerous, but they remind us how unpredictable 

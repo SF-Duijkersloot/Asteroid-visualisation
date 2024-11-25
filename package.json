@@ -5,10 +5,12 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"deploy": "vercel --prod"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/adapter-vercel": "^5.4.7",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"svelte": "^5.0.0",
@@ -17,6 +19,7 @@
 	"dependencies": {
 		"d3": "^7.9.0",
 		"gsap": "^3.12.5",
-		"svelte-intersection-observer": "^1.0.0"
+		"svelte-intersection-observer": "^1.0.0",
+		"vercel": "^39.1.1"
 	}
 }
