@@ -37,10 +37,18 @@
     const showCloseOrbit = () => {
         d3.select('.asteroid-group')
             .selectAll('.asteroid')
-            .filter(d => !d.is_potentially_hazardous_asteroid)
-            .transition() // Name this transition
+            .filter(d => !d.closeEncounter)
+            .transition('show-close-orbit')
             .duration(1000)
             .attr('opacity', 0.1)
+    }
+    const scaleCloseOrbit = () => {
+        d3.select('.asteroid-group')
+            .selectAll('.asteroid')
+            .filter(d => d.closeEncounter)
+            .transition('scale-close-orbit')
+            .duration(1000)
+            .attr('r', d => d.clampedRadius * 3)
     }
 
 
@@ -54,6 +62,7 @@
                     // Start the animation
                     console.log('Start animation')
                     showCloseOrbit()
+                    scaleCloseOrbit()
                 }
             })
         }, { rootMargin: '0px 0px -50% 0px', threshold: 0.5 })

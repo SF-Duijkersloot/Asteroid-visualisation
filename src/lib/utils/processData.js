@@ -59,6 +59,10 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
         // Scale distance
         const orbitalRadius = orbitalRadiusScale(+asteroid.close_approach_data[0].miss_distance.lunar)
         const rawOrbitalRadius = asteroid.close_approach_data[0].miss_distance.lunar // For debugging
+
+        const closeEncounter = asteroid.close_approach_data[0].miss_distance.lunar <= 1 
+            ? true 
+            : false
         
         // Magnitude (brightness) of the asteroid
         const magnitude = magnetudeScale(+asteroid.absolute_magnitude_h)
@@ -78,6 +82,7 @@ export function processAsteroidData(asteroids, minOrbitalRadius, maxOrbitalRadiu
             isClamped,
             orbitalRadius,
             rawOrbitalRadius,
+            closeEncounter,
             magnitude,
             velocity,
             pathData,
