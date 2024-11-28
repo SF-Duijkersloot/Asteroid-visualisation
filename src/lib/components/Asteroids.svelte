@@ -15,10 +15,19 @@
             // Set static attributes
             .attr('class', 'asteroid')
             .attr('r', d => d.clampedRadius)
-            .attr('fill', d => d.is_potentially_hazardous_asteroid ? '#CC4243' : '#DDDCDD')
+            .attr('fill', d => d.is_potentially_hazardous_asteroid 
+                ? '#CC4243' 
+                : '#DDDCDD'
+            )
             .attr('opacity', d => d.magnitude)
-            .attr('stroke', d => (d.isClamped ? 'orange' : 'none'))
-            .attr('stroke-width', d => (d.isClamped ? 2 : 0))
+            .attr('stroke', d => d.isClamped 
+                ? 'orange' 
+                : 'none'
+            )
+            .attr('stroke-width', d => d.isClamped 
+                ? 2 
+                : 0
+            )
             // Animate orbital motion
             .each(function (d) {
                 const animateOrbit = () => {

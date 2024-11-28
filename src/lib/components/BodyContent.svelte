@@ -7,6 +7,7 @@
     const withinMoonOrbit = asteroids.filter(
         asteroid => asteroid.close_approach_data[0].miss_distance.lunar <= 1
     ).length
+    
 </script>
 
 <article>
@@ -59,11 +60,10 @@
     <section class="observer-section">
         <h3>Conclusion</h3>
         <p>
-            This visualization gives us a small window into the activity of our solar system. 
-            The asteroids near Earth are constantly moving, each with its own unique path. 
-            Even though most of them are harmless, they remind us why scientists keep a close 
-            eye on them—to make sure we're prepared for anything that might come our way in 
-            the future.
+            This visualization reveals the dynamic motion of near-Earth asteroids. 
+            Identifying which asteroids are potentially hazardous isn't always clear, 
+            highlighting the importance of scientists monitoring them early to detect 
+            and prepare for potential threats in advance.
         </p>
     </section>
 </article>
@@ -73,7 +73,7 @@
     article {
         margin-top: 10vw;
         width: 20vw;
-        height: 170vw;
+        height: 205vw;
         color: white;
     }
 
@@ -99,7 +99,7 @@
     h3 {
         font-size: 1.2vw;
         font-weight: 500;
-        margin: 6.5em 0 1.5em 0;
+        margin: 12.5em 0 1.5em 0;
     }
 
     p {

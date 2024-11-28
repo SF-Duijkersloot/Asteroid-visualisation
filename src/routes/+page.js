@@ -35,7 +35,6 @@ const generateDateRanges = (startDate, endDate) => {
     return ranges
 }
 
-console.log(generateDateRanges(oneMonthAgo, today))
 /*******************************
          Fetch Function
 ********************************/
@@ -55,6 +54,7 @@ const fetchNeo = async (start, end) => {
         return []
     }
 }
+
 /*******************************
            Load Export
 ********************************/
